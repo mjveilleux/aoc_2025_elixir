@@ -1,15 +1,8 @@
 defmodule Aoc2025Elixir.Aoc do
   def initialize_lock do
-    # create sequence from 0-99 and concat that sequence 100 times
     sequence = Enum.to_list(0..99)
-    concatenated_sequence = Enum.concat(List.duplicate(sequence, 100))
-    # add a column for position number
-    positioned_sequence =
-      Enum.with_index(concatenated_sequence, fn value, index -> {index, value} end)
-
-    # table: key - value where key is the position and the value is the concatenated_sequence
-
-    positioned_sequence
+    concatenated_sequence = Enum.concat(List.duplicate(sequence, 10000))
+    Enum.with_index(concatenated_sequence, fn value, index -> {index, value} end)
   end
 
   def find_middle_50_of_lock_sequence do
@@ -18,18 +11,17 @@ defmodule Aoc2025Elixir.Aoc do
 
     case length(fifties) do
       0 ->
-        # Handle the case where no 50s exist
         nil
 
       len ->
         middle_index = div(len - 1, 2)
-        # Fix: Match the 2-element tuple {pos, _}
         {pos, _} = Enum.at(fifties, middle_index)
         pos
     end
   end
 
-  def get_net_steps do
+  # we will call movements clicks
+  def clicks_to_take do
     # get the file documents/day1.txt 
     # read line by line 
     # if starts with R then positive 
@@ -49,18 +41,50 @@ defmodule Aoc2025Elixir.Aoc do
         "L" -> -num
       end
     end)
-    |> Enum.sum()
   end
 
-  def get_final_position_and_lock_value do
+  def table_of_movements do
     lock = initialize_lock()
-    initial_pos = find_middle_50_of_lock_sequence()
-    net_steps = get_net_steps()
+    clicks = clicks_to_take()
+    start_pos = find_middle_50_of_lock_sequence()
 
-    final_pos = Enum.sum([initial_pos, net_steps])
+    # Optimization: accessing a large list by index is slow (O(n)). 
+    # Converting to map makes access O(log n) or O(1).
+    pos_to_val = Map.new(lock)
+    max_pos = length(lock) - 1
 
-    answer = Enum.filter(lock, fn {pos, _} -> pos == final_pos end)
-    answer
+    # FIX 1: map_reduce returns {list, accumulator}
+    {movements, _final_pos} =
+      Enum.map_reduce(Enum.with_index(clicks), start_pos, fn {delta, step}, cur_pos ->
+        new_pos = cur_pos + delta
+
+        if new_pos < 0 or new_pos > max_pos do
+          raise ArgumentError,
+                "out of bounds at step #{step}: new_pos=#{new_pos}, bounds=0..#{max_pos}"
+        end
+
+        value_at_new = Map.fetch!(pos_to_val, new_pos)
+
+        movement = %{
+          step: step,
+          from_pos: cur_pos,
+          to_pos: new_pos,
+          # This is the lock value (0..99)
+          to_value: value_at_new,
+          delta: delta
+        }
+
+        {movement, new_pos}
+      end)
+
+    movements
+  end
+
+  def count_zeroes_in_movements_table do
+    table = table_of_movements()
+
+    # FIX 2: Pattern match on the Map, not a Tuple
+    Enum.count(table, fn %{to_value: val} -> val == 0 end)
   end
 end
 
@@ -71,6 +95,8 @@ defmodule Aoc2025Elixir.SolveDay1 do
     # Aoc2025Elixir.Aoc.find_middle_50_of_lock_sequence()
     # Aoc2025Elixir.Aoc.find_middle_50_of_lock_sequence()
     # Aoc2025Elixir.Aoc.get_and_transcribe_documents()
-    Aoc2025Elixir.Aoc.get_final_position_and_lock_value()
+    # Aoc2025Elixir.Aoc.get_final_position_and_lock_value()
+    # Aoc2025Elixir.Aoc.table_of_movements()
+    Aoc2025Elixir.Aoc.count_zeroes_in_movements_table()
   end
 end
