@@ -70,6 +70,7 @@ defmodule Aoc2025Elixir.Aoc do
           from_pos: cur_pos,
           to_pos: new_pos,
           # This is the lock value (0..99)
+          from_value: Map.fetch!(pos_to_val, cur_pos),
           to_value: value_at_new,
           delta: delta
         }
@@ -78,6 +79,22 @@ defmodule Aoc2025Elixir.Aoc do
       end)
 
     movements
+  end
+
+  ## how many times did we cross 0 (between from_value and to_value -- be careful of big deltas)
+
+  def count_zero_crossings do
+    table = table_of_movements()
+
+    # We sum the crossings, rather than counting rows, 
+    # because a big delta (e.g. 300) crosses zero multiple times.
+    table
+    |> Enum.map(fn %{from_pos: from, to_pos: to} ->
+      # Since 0 occurs every 100 indices:
+      # If div(from, 100) != div(to, 100), we crossed a boundary.
+      abs(div(to, 100) - div(from, 100))
+    end)
+    |> Enum.sum()
   end
 
   def count_zeroes_in_movements_table do
@@ -96,7 +113,7 @@ defmodule Aoc2025Elixir.SolveDay1 do
     # Aoc2025Elixir.Aoc.find_middle_50_of_lock_sequence()
     # Aoc2025Elixir.Aoc.get_and_transcribe_documents()
     # Aoc2025Elixir.Aoc.get_final_position_and_lock_value()
-    # Aoc2025Elixir.Aoc.table_of_movements()
+    # Aoc2025Elixir.Aoc.count_zero_crossings()
     Aoc2025Elixir.Aoc.count_zeroes_in_movements_table()
   end
 end
