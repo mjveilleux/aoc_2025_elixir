@@ -13,6 +13,10 @@ defmodule Solve.UnlockSafe do
     # Get counts
     Helpers.counts(pid)
 
+    # iex(1)> Solve.UnlockSafe.run()
+    # %{clicks_on_zero: 6671, stops_on_zero: 1152}
+    # {part 2 answer, part 1 answer}
+
     # Inspect per-click events if needed
     # Helpers.events(pid) |> Enum.take(100) |> IO.inspect(label: "first 10 events")
   end
