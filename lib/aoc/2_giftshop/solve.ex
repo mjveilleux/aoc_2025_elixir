@@ -3,6 +3,8 @@ defmodule Solve.ResolveInvalidIDs do
   alias Helpers.ResolveInvalidIDs, as: Helpers
 
   def run do
+    invalid_ids_map = Helpers.build_invalid_ids_map()
+
     invalid_ids =
       Helpers.get_chunks()
       |> Task.async_stream(
@@ -11,8 +13,7 @@ defmodule Solve.ResolveInvalidIDs do
           {a, b} = Helpers.parse_for_ab(c)
 
           Helpers.ab_range(a, b)
-          # list_of_candidates = Helpers.find_potential_candidates(raw_list)
-          |> Enum.map(&Helpers.evaluate_invalid_ids/1)
+          |> Stream.map(&Helpers.evaluate_invalid_ids(&1, invalid_ids_map))
           |> Enum.reject(&is_nil/1)
         end,
         timeout: :infinity

@@ -22,7 +22,7 @@ defmodule Helpers.ResolveInvalidIDs do
 
   # ab_range/2 -> a..b (inclusive)
   def ab_range(a, b) when is_integer(a) and is_integer(b) and a <= b do
-    Enum.to_list(a..b)
+    a..b
   end
 
   # this worked for part 1 but not part 2, commenting out in solver
@@ -150,11 +150,17 @@ defmodule Helpers.ResolveInvalidIDs do
     end
   end
 
-  def evaluate_invalid_ids(candidate) do
-    digits = count_digits(candidate)
-    invalid_ids = generate_invalid_ids_by_length(digits)
+  def build_invalid_ids_map(max_digits \\ 10) do
+    for d <- 1..max_digits do
+      {d, MapSet.new(generate_invalid_ids_by_length(d))}
+    end
+    |> Map.new()
+  end
 
-    if candidate in invalid_ids do
+  def evaluate_invalid_ids(candidate, invalid_ids_map) do
+    digits = count_digits(candidate)
+
+    if MapSet.member?(invalid_ids_map[digits], candidate) do
       candidate
     else
       nil
