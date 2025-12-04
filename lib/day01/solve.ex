@@ -6,7 +6,7 @@ defmodule Solve.UnlockSafe do
 
     Helpers.process_instructions(
       pid,
-      File.read!("lib/aoc/1_unlock_safe/input.txt")
+      File.read!("lib/day01/input.txt")
       |> String.split("\n", trim: true)
     )
 

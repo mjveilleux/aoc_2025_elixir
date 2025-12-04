@@ -3,7 +3,7 @@ defmodule Helpers.ResolveInvalidIDs do
   # Accepts "a-b" (optionally with spaces)
 
   def get_chunks do
-    line = File.read!("lib/aoc/2_giftshop/input.txt")
+    line = File.read!("lib/day02/input.txt")
     # put chunks into a list 
     chunks = line |> String.split(",", trim: true)
     chunks

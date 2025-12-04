@@ -21,7 +21,7 @@ defmodule Solve.ResolveInvalidIDs do
       |> Enum.flat_map(fn {:ok, result} -> result end)
 
     json = Jason.encode!(invalid_ids)
-    File.write!("lib/aoc/2_giftshop/invalid_ids.json", json)
+    File.write!("lib/day02/invalid_ids.json", json)
     %{count: length(invalid_ids), sum: Enum.sum(invalid_ids)}
   end
 end
