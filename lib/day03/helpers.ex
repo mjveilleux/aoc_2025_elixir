@@ -6,6 +6,7 @@ defmodule Helpers.Batteries do
     |> Enum.to_list()
   end
 
+  # this solves the first one
   # def find_largest_joltage_in_bank(bank) when is_binary(bank) do
   #   chars =
   #     bank
