@@ -8,7 +8,7 @@ defmodule Solve.Batteries do
       |> Task.async_stream(
         fn bank ->
           Logger.debug("Loaded #{bank}")
-          Helpers.find_largest_joltage_in_bank(bank)
+          Helpers.find_largest_joltage_in_bank(bank, 12)
         end,
         timeout: :infinity
       )
